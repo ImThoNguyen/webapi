@@ -44,7 +44,6 @@ namespace backend.Controllers
         public async Task<IActionResult> GetHistory()
         {
             _logger.LogInformation("bat xu ly lay history");
-            _demo.sum(1,1);
             return Ok(_handler.GetHistory());
         }
 
