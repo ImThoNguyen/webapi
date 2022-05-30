@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace backend.Handler
 {
 
-    public class SortNumberHandler   : IDemo, ISortNumberHandler
+    public class SortNumberHandler   : ISortNumberHandler
     {
         private readonly IValidator<GetStringNumber> _validator;
         ILogger<SortNumberHandler> _logger;
@@ -51,13 +51,7 @@ namespace backend.Handler
 
             result.ActualResult = string.Join(",", subResult.ConvertAll<string>(x => x.ToString()));
             SaveHistory(result);
-
             return result;
-        }
-
-        public int sum(int a, int b)
-        {
-            return a + b;
         }
     }
 }

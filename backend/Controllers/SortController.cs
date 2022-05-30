@@ -1,4 +1,6 @@
-﻿using backend.Handler;
+﻿using backend.Data.Entities;
+using backend.Data.Repositories;
+using backend.Handler;
 using backend.Queries;
 using backend.Results;
 using Microsoft.AspNetCore.Mvc;
@@ -16,15 +18,14 @@ namespace backend.Controllers
     public class SortController : ControllerBase
     {
         ILogger<SortController> _logger;
-
         ISortNumberHandler _handler;
-        IDemo _demo;
+        ICategoryRepository _categoryRepository;
 
-        public SortController( ILogger<SortController> logger, ISortNumberHandler handler, IDemo demo)
+        public SortController(ILogger<SortController> logger, ISortNumberHandler handler, ICategoryRepository categoryRepository)
         {
             _handler = handler;
             _logger = logger;
-            _demo = demo;
+            _categoryRepository = categoryRepository;
         }
 
         [HttpPost]
@@ -44,9 +45,35 @@ namespace backend.Controllers
         public async Task<IActionResult> GetHistory()
         {
             _logger.LogInformation("bat xu ly lay history");
-            _demo.sum(1,1);
             return Ok(_handler.GetHistory());
         }
+
+
+        [HttpPost]
+        [Route("save_category")]
+        [ProducesResponseType(typeof(Category), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> SaveCategory([FromBody] CreateCategory request)
+        {
+            var entity = new Category()
+            {
+                Content = request.Content,
+                Id = request.Id,
+                CreatedBy = request.CreatedBy,
+                CreatedOn = request.CreatedOn,
+                MetaTitle = request.MetaTitle,
+                ModifiedBy = request.ModifiedBy,
+                ModifiedOn = request.ModifiedOn,
+                Slug = request.Slug,
+                Title = request.Title
+            };
+
+            await _categoryRepository.AddOrUpdateAsync(request);
+            await _categoryRepository.UnitOfWork.SaveChangesAsync();
+
+            return Ok(entity);
+        }
+
 
 
     }
